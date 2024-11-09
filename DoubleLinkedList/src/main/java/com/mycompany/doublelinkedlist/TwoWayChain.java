@@ -1,7 +1,5 @@
 package com.mycompany.doublelinkedlist;
 
-
-
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -150,8 +148,34 @@ public class TwoWayChain<T> implements Iterable<T> {
 
         return count;  // Return the total count of matching elements
     }
-    
-    
+
+    public TwoWayChain<T> doMathOperation(Function<T, T> mathOperation) {
+        TwoWayChain<T> current = this.First();
+        TwoWayChain<T> resultHead = null;
+        TwoWayChain<T> resultTail = null;
+
+        while (current != null) {
+            // Apply the math operation to the current element
+            T newData = mathOperation.apply(current.Data);
+
+            // Create a new node with the result
+            TwoWayChain<T> newNode = new TwoWayChain<>(newData);
+
+            if (resultHead == null) {
+                resultHead = newNode;  // Initialize the head of the new chain
+                resultTail = newNode;  // Initialize the tail of the new chain
+            } else {
+                resultTail.Next = newNode;  // Attach the new node
+                newNode.Prev = resultTail;  // Set the previous pointer
+                resultTail = newNode;  // Move the tail
+            }
+
+            current = current.Next;  // Move to the next element in the original chain
+        }
+
+        return resultHead;  // Return the new chain's head
+    }
+
     // Implementing Iterable interface to allow foreach iteration
     @Override
     public Iterator<T> iterator() {
@@ -160,6 +184,7 @@ public class TwoWayChain<T> implements Iterable<T> {
 
     // Inner Iterator class for TwoWayChain
     private class TwoWayChainIterator implements Iterator<T> {
+
         private TwoWayChain<T> current;
 
         public TwoWayChainIterator(TwoWayChain<T> start) {
